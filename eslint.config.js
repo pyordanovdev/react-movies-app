@@ -1,32 +1,40 @@
-import jsdocPlugin from 'eslint-plugin-jsdoc'
+import js from '@eslint/js'
+import globals from 'globals'
+import react from 'eslint-plugin-react'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
 
 export default [
-  { files: ['**/*.{js,mjs,cjs,jsx}'] },
-  { languageOptions: { globals: globals.browser } },
-  pluginJs.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  googleConfig,
-  prettierConfig,
-  { plugins: { prettier: prettierPlugin, jsdoc: jsdocPlugin } },
+  { ignores: ['dist'] },
   {
+    files: ['**/*.{js,jsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        ecmaFeatures: { jsx: true },
+        sourceType: 'module',
+      },
+    },
+    settings: { react: { version: '18.3' } },
+    plugins: {
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
     rules: {
-      'prettier/prettier': 'error',
-      'jsdoc/check-alignment': 'warn',
-      'jsdoc/check-param-names': 'warn',
-      'prettier/prettier': 'error',
-      'react/jsx-uses-react': 'error',
-      'react/jsx-uses-vars': 'error',
-      'react/react-in-jsx-scope': 'off',
-      'jsdoc/require-jsdoc': [
+      ...js.configs.recommended.rules,
+      ...react.configs.recommended.rules,
+      ...react.configs['jsx-runtime'].rules,
+      ...reactHooks.configs.recommended.rules,
+      'react/jsx-no-target-blank': 'off',
+      'react/prop-types': 'off',
+      'react-refresh/only-export-components': [
         'warn',
-        {
-          require: {
-            FunctionDeclaration: true,
-            MethodDefinition: true,
-            ClassDeclaration: true,
-          },
-        },
+        { allowConstantExport: true },
       ],
+      semi: ['error', 'always'],
     },
   },
 ]
